@@ -2,8 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import JSON5 from 'json5';
 import invoker from '../invoker';
+import listenerRaw from '../listener';
 
-var Service = function(folder, listener){
+var Service = function(folder){
     var files = fs.readdirSync(folder);
 	for(var i = 0; i < files.length; i++){
 		var file = files[i];
@@ -11,6 +12,7 @@ var Service = function(folder, listener){
         var fullpath = path.join(folder, file);
         var module = ReadModule(fullpath);
         module.filename = file;
+        var listener = listenerRaw(module);
         invoker(module, listener);
     }
 };

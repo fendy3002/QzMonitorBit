@@ -90,7 +90,18 @@ var Service = (listener) => function(context, module){
 
     var handle = invoke(module.url, responseCallback);
     handle.on("error", err => {
-        handleError({err : err.toString()}, "http");
+        var endTime = new Date();
+        var diff = endTime.getTime() - context.start.getTime();
+        var time = {
+            start: context.start,
+            end: endTime,
+            diff: diff
+        };
+
+        handleError({
+            err : err.toString(),
+            time: time
+        }, "http");
     });
 };
 

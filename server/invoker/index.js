@@ -6,8 +6,7 @@ import sprintf from 'sprintf-js';
 import appConfig from '../../config/app.js';
 import invokeHttp from './invokeHttp.js';
 
-var Service = function(module, listenerRaw){
-    var listener = listenerRaw(module);
+var Service = function(module, listener){
     if(module.type == "http"){
         var invoke = invokeHttp(listener);
         var invokeContext = { retry : 0, start : new Date()};
