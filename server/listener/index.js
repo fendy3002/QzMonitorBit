@@ -26,20 +26,30 @@ function addDays(date, days) {
 var Service = (module) => {
     var buffer = [];
     var folder = path.join(storage, module.filename);
-
+    var lastFlush = new Date();
     var error = (actual, message) => {
         console.log("error", message);
         flush();
     };
     var success = (actual) => {
         console.log("success", actual);
-        buffer.push({
+        queue({
             "success": actual
         });
     };
+
+    var queue = (actual) => {
+        buffer.push({
+            "success": actual
+        });
+        if(new Date().getTime() - lastFlush.getTime() > appConfig.logEvery){
+            flush();
+        }
+    }
     var flush = () => {
 
         buffer = [];
+        lastFlush = new Date();
     };
 
     return {

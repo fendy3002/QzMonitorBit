@@ -1,6 +1,6 @@
 module.exports = {
     "port": 3000,
-    "logEvery": 60, // in second
+    "logEvery": 600, // in second
     "error": {
         "http": {
             "status": "Response status code is not expected",
