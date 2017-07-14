@@ -3,10 +3,30 @@ module.exports = {
     "logEvery": 600, // in second
     "error": {
         "http": {
-            "status": "Response status code is not expected",
+            "status": "Response status code: %s",
             "different": "Response different than expected",
             "notJSON": "Response body is incorrect as JSON",
             "http": "Cannot perform http request"
+        }
+    },
+    "mail": {
+        "default": {
+            "transporter": {
+                "host": 'smtp.example.com',
+                "port": 465,
+                "secure": true, // secure:true for port 465, secure:false for port 587
+                "auth": {
+                    "user": 'username@example.com',
+                    "pass": 'userpass'
+                }
+            },
+            "from": "username@example.com",
+            "message": {
+                "subject": '%NAME% cannot be accessed at %NOW%', // Subject line
+                "text": '%NAME% cannot be accessed by %ACCESS%', // plain text body
+                "html": '<b>%NAME%</b> cannot be accessed by %ACCESS%, with data:\n' + 
+                    '<pre/>%ACTUAL%</pre>' // html body
+            }
         }
     }
 };

@@ -11,6 +11,7 @@ var Service = (listener) => function(context, module){
     if(module.method == "post") { invoke = module.url.startsWith("https") ? https.post : http.post; }
 
     var handleError = (actual, error = "") => {
+        actual.error = error;
         var maxRetry = module.retry || 5;
         if(context.retry < maxRetry){
             context.retry++;
@@ -22,7 +23,7 @@ var Service = (listener) => function(context, module){
                 ...module.error
             };
             var message = messageTemplate[error];
-            listener.error(actual, message);
+            listener.error(actual);
         }
     };
 

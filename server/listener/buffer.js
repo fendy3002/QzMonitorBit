@@ -87,12 +87,21 @@ var Service = (module) => {
     var folder = path.join(storage, module.filename);
     var lastFlush = new Date();
 
-    var queue = (actual) => {
-        buffer.push(actual);
+    var success = (actual) => {
+        buffer.push({
+            "success": actual
+        });
         if(new Date().getTime() - lastFlush.getTime() > appConfig.logEvery){
             flush();
         }
-    }
+    };
+    var error = (actual) => {
+        buffer.push({
+            "error": actual
+        });
+        flush();
+    };
+
     var flush = () => {
         // if monday morning
         if(new Date().getDay() == 1 && new Date().getHours() == 0){
