@@ -1,4 +1,5 @@
 import email from './email.js';
+import socket from './socket.js';
 import lo from 'lodash';
 var Service = function(module, callback){
     callback = callback || (() => {});
@@ -11,6 +12,8 @@ var Service = function(module, callback){
                 }));
         }
     }
+
+    notifiers.push(socket(module));
 
     var error = function(actual){
         lo.forEach(notifiers, n=> {

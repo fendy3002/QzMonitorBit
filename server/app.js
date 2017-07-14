@@ -9,4 +9,4 @@ context.io = io;
 context.appConfig = appConfig;
 dispatcher(path.join(__dirname, "../config/listener"));
 
-console.log("App running on port " + appConfig.port);
+console.log("Websocket running on port " + appConfig.port);

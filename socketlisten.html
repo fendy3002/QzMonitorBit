@@ -1,0 +1,16 @@
+<html>
+    <head></head>
+    <body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.slim.js"></script>
+        <script>
+            var socket1 = io('http://localhost:3000/httpbin.l/error');
+            socket1.on('message', function (data) {
+                console.log("error", data);
+            });
+            var socket2 = io('http://localhost:3000/httpbin.l/info');
+            socket2.on('message', function (data) {
+                console.log("info", data);
+            });
+        </script>
+    </body>
+</html>
