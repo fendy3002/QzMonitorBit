@@ -1,10 +1,10 @@
-import appConfig from '../../config/app.js';
 import path from 'path';
 import fs from 'fs';
 import lo from 'lodash';
 import JSON5 from 'json5';
 import dateFormat from 'dateformat';
 import notify from '../notify';
+import context from "../context.js";
 
 var getFilename = (date) => {
     return dateFormat(getMonday(date), "yyyymmdd") + "-" +
@@ -57,6 +57,8 @@ var getGroup = function(buffer){
 };
 
 var Service = (module) => {
+    var appConfig = context.appConfig;
+
     var buffer = [];
     var storage = '../../storage/log';
     var folder = path.join(__dirname, storage, module.filename);

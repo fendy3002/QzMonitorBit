@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
-import appConfig from '../../config/app.js';
 import dateformat from 'dateformat';
+import context from "../context.js";
 
 var getAccess = (module) => {
     if(module.type = "http"){ return module.url + ":" + module.method }
@@ -27,6 +27,7 @@ var getText = function(module, actual, message){
     };
 };
 var Service = function(module, moduleMail, callback){
+    var appConfig = context.appConfig;
     var mailConfig = {
         "config": appConfig.mail[moduleMail.use], 
         "to": moduleMail.to
