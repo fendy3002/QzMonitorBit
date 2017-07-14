@@ -11,7 +11,7 @@ var getText = function(module, actual, message){
         "%NAME%" : module.name,
         "%NOW%" : dateformat(actual.time.end, "yyyymmmdd hh:MM:dd"),
         "%ACCESS%" : getAccess(module),
-        "%ACTUAL" : actual
+        "%ACTUAL%" : JSON.stringify(actual, null, 2)
     };
 
     return {
@@ -20,13 +20,16 @@ var getText = function(module, actual, message){
         }),
         html: message.html.replace(/%\w+%/g, function(all) {
             return toParse[all] || all;
+        }),
+        subject: message.subject.replace(/%\w+%/g, function(all) {
+            return toParse[all] || all;
         })
     };
 };
-var Service = function(module, moduleMail){
+var Service = function(module, moduleMail, callback){
     var mailConfig = {
-        "config": appConfig.mail[k.use], 
-        "to": k.to
+        "config": appConfig.mail[moduleMail.use], 
+        "to": moduleMail.to
     };
 
     var error = function(actual){
@@ -34,22 +37,17 @@ var Service = function(module, moduleMail){
         var body = getText(module, actual, mailConfig.config.message)
         var mailOptions = {
             from: mailConfig.config.from,
-            to: mailconfig.to,
-            subject: mailConfig.config.message.subject,
+            to: mailConfig.to,
+            subject: body.subject,
             text: body.text,
             html: body.html
         };
-
         transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.log(error);
-            } else {
-                console.log('Email sent: ' + info.response);
-            }
+            callback(error, info);
         });
     };
     var flush = function(buffer){
-        
+        callback(null, null);
     };
 
     return {

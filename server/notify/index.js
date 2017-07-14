@@ -1,11 +1,13 @@
 import email from './email.js';
-var Service = function(module){
+import lo from 'lodash';
+var Service = function(module, callback){
+    callback = callback || (() => {});
     var notifiers = [];
     if(module.notify){
         if(module.notify.email){
             notifiers = notifiers.concat(
                 lo.map(module.notify.email, k=> {
-                    return email(module, k);
+                    return email(module, k, callback);
                 }));
         }
     }
@@ -20,6 +22,11 @@ var Service = function(module){
             n.flush(buffer);
         });
     };
+
+    return {
+        error,
+        flush
+    };
 };
 
-export default Serivce;
+export default Service;
