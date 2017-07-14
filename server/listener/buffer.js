@@ -108,7 +108,11 @@ var Service = (module) => {
             "error": actual
         });
         notifier.error(actual);
-        flush();
+        if(new Date().getTime() - lastFlush.getTime() > (appConfig.logEvery * 1000)){
+            var toSendBuffer = buffer;
+            flush();
+            notifier.flush(toSendBuffer);
+        }
     };
 
     var flush = () => {
