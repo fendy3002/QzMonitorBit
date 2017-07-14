@@ -94,8 +94,24 @@ var Service = (module) => {
         }
     }
     var flush = () => {
-        if(new Date().getHours() == 0){
-            
+        // if monday morning
+        if(new Date().getDay() == 1 && new Date().getHours() == 0){
+            var minDate = lo.minBy(buffer.time.start);
+            // if buffer still has sunday data
+            if(minDate.getDay() == 0){
+                writeBuffer(lo.filter(buffer, k=> k.getDay() == 0), ()=>{
+                    writeBuffer(lo.filter(buffer, k=> k.getDay() == 1), ()=>{
+                        buffer = [];
+                        lastFlush = new Date();
+                    });
+                });
+            }
+            else{
+                writeBuffer(buffer, ()=>{
+                    buffer = [];
+                    lastFlush = new Date();
+                });
+            }
         }
         else{
             writeBuffer(buffer, ()=>{
