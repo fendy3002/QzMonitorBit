@@ -4,6 +4,7 @@ import fs from 'fs';
 import lo from 'lodash';
 import JSON5 from 'json5';
 import dateFormat from 'dateformat';
+import notify from '../notify';
 
 var storage = '../../storage/log';
 
@@ -86,19 +87,23 @@ var Service = (module) => {
     var buffer = [];
     var folder = path.join(storage, module.filename);
     var lastFlush = new Date();
+    var notifier = notify(module);
 
     var success = (actual) => {
         buffer.push({
             "success": actual
         });
         if(new Date().getTime() - lastFlush.getTime() > appConfig.logEvery){
+            var toSendBuffer = buffer;
             flush();
+            notifier.flush(toSendBuffer);
         }
     };
     var error = (actual) => {
         buffer.push({
             "error": actual
         });
+        notifier.error(actual);
         flush();
     };
 

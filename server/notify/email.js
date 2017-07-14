@@ -23,38 +23,38 @@ var getText = function(module, actual, message){
         })
     };
 };
-var Service = function(module){
-    var moduleMails = module.notify.email;
-    var mailConfigs = lo.map(moduleMails, k=> (
-        {
-            "config": appConfig.mail[k.use], 
-            "to": k.to
-        }
-    ) );
+var Service = function(module, moduleMail){
+    var mailConfig = {
+        "config": appConfig.mail[k.use], 
+        "to": k.to
+    };
 
     var error = function(actual){
-        lo.forEach(mailConfigs, mailConfig => {
-            var transporter = nodemailer.createTransport(mailConfig.config.transporter);
-            var body = getText(module, actual, mailConfig.config.message)
-            var mailOptions = {
-                from: mailConfig.config.from,
-                to: mailconfig.to,
-                subject: mailConfig.config.message.subject,
-                text: body.text,
-                html: body.html
-            };
+        var transporter = nodemailer.createTransport(mailConfig.config.transporter);
+        var body = getText(module, actual, mailConfig.config.message)
+        var mailOptions = {
+            from: mailConfig.config.from,
+            to: mailconfig.to,
+            subject: mailConfig.config.message.subject,
+            text: body.text,
+            html: body.html
+        };
 
-            transporter.sendMail(mailOptions, function(error, info){
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Email sent: ' + info.response);
-                }
-            });
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
         });
     };
     var flush = function(buffer){
         
+    };
+
+    return {
+        error,
+        flush
     };
 };
 
