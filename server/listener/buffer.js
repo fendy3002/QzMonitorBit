@@ -6,8 +6,6 @@ import JSON5 from 'json5';
 import dateFormat from 'dateformat';
 import notify from '../notify';
 
-var storage = '../../storage/log';
-
 var getFilename = (date) => {
     return dateFormat(getMonday(date), "yyyymmdd") + "-" +
         dateFormat(addDays(getMonday(date), 6), "yyyymmdd") + ".log";
@@ -30,31 +28,6 @@ function pad(num, size) {
     return s.substr(s.length-size);
 };
 
-var writeBuffer = function(buffer, callback){
-    var groupBuffer = getGroup(buffer);
-    var earliest = lo.minBy(buffer, k=> k.time.start);
-    var fileName = getFilename(earliest);
-    var fullPath = path.join(folder, fileName);
-    fs.readFile(fullPath, "utf8", (err, data) => {
-        var existing = {};
-        if(!err && data){
-            existing = JSON5.parse(data);
-        }
-        var toWriteKeys = Object.keys(groupBuffer);
-        for(var i = 0; i < toWriteKeys.length; i ++){
-            var currentKey = toWriteKeys[i];
-            if(existing[currentKey]){
-                existing[currentKey].success += groupBuffer[currentKey].success;
-                existing[currentKey].error += groupBuffer[currentKey].error;
-                existing[currentKey].longest = Math.max(groupBuffer[currentKey].success);
-            }else{
-                existing[currentKey] = groupBuffer[currentKey];
-            }
-        }
-
-        fs.writeFile(fullPath, JSON.stringify(existing), callback);
-    });
-};
 var getGroup = function(buffer){
     var group = {};
     for(var i = 0; i < buffer.length; i++){
@@ -85,15 +58,46 @@ var getGroup = function(buffer){
 
 var Service = (module) => {
     var buffer = [];
-    var folder = path.join(storage, module.filename);
+    var storage = '../../storage/log';
+    var folder = path.join(__dirname, storage, module.filename);
     var lastFlush = new Date();
     var notifier = notify(module);
+
+    var writeBuffer = function(buffer, callback){
+        var groupBuffer = getGroup(buffer);
+        var earliest = lo.minBy(buffer, k=> (k.success || k.error).time.start);
+
+        var fileName = getFilename((earliest.success || earliest.error).time.start);
+        var fullPath = path.join(folder, fileName);
+        fs.mkdir(folder, "0777", (err) => {
+            fs.readFile(fullPath, "utf8", (err, data) => {
+                var existing = {};
+                if(!err && data){
+                    existing = JSON5.parse(data);
+                }
+                var toWriteKeys = Object.keys(groupBuffer);
+                for(var i = 0; i < toWriteKeys.length; i ++){
+                    var currentKey = toWriteKeys[i];
+                    if(existing[currentKey]){
+                        existing[currentKey].success += groupBuffer[currentKey].success;
+                        existing[currentKey].error += groupBuffer[currentKey].error;
+                        existing[currentKey].longest = Math.max(groupBuffer[currentKey].longest);
+                    }else{
+                        existing[currentKey] = groupBuffer[currentKey];
+                    }
+                }
+                fs.writeFile(fullPath, 
+                    JSON.stringify(existing, null, 2), 
+                    'utf8', callback);
+            });
+        });
+    };
 
     var success = (actual) => {
         buffer.push({
             "success": actual
         });
-        if(new Date().getTime() - lastFlush.getTime() > appConfig.logEvery){
+        if(new Date().getTime() - lastFlush.getTime() > (appConfig.logEvery * 1000)){
             var toSendBuffer = buffer;
             flush();
             notifier.flush(toSendBuffer);
@@ -121,14 +125,14 @@ var Service = (module) => {
                 });
             }
             else{
-                writeBuffer(buffer, ()=>{
+                writeBuffer(buffer, (err)=>{
                     buffer = [];
                     lastFlush = new Date();
                 });
             }
         }
         else{
-            writeBuffer(buffer, ()=>{
+            writeBuffer(buffer, (err)=>{
                 buffer = [];
                 lastFlush = new Date();
             });
@@ -136,7 +140,8 @@ var Service = (module) => {
     };
 
     return {
-        queue,
+        success,
+        error,
         flush
     };
 };

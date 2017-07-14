@@ -7,17 +7,13 @@ import bufferRaw from './buffer.js';
 import notify from '../notify';
 
 var Service = (module) => {
-
     var buffer = bufferRaw(module);
-    var folder = path.join(storage, module.filename);
     var error = (actual, message) => {
         buffer.error(actual, message);
         buffer.flush();
     };
     var success = (actual) => {
-        buffer.queue({
-            "success": actual
-        });
+        buffer.success(actual);
     };
 
     return {
