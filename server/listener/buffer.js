@@ -34,7 +34,7 @@ var writeBuffer = function(buffer, callback){
     var groupBuffer = getGroup(buffer);
     var earliest = lo.minBy(buffer, k=> k.time.start);
     var fileName = getFilename(earliest);
-    var fullPath = path.join(storage, fileName);
+    var fullPath = path.join(folder, fileName);
     fs.readFile(fullPath, "utf8", (err, data) => {
         var existing = {};
         if(!err && data){
