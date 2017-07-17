@@ -8,7 +8,7 @@ describe('test', function() {
         context.appConfig = {
             "port": 3000,
             "logEvery": 10, // in second
-            "cpuInterval": 5 // in second
+            "cpuInterval": 1 // in second
         };
         var info = machineInfo();
 

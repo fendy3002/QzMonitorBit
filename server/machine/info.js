@@ -46,7 +46,7 @@ var getCpuAvg = function(last, now){
             time: new Date(),
             idle: idleDiff,
             ticks: ticksDiff,
-            avg: 100 - ~~(100 * idleDiff / ticksDiff)
+            avg: (100 - (100 * idleDiff / ticksDiff)).toFixed(2)
         };
     });
     return result;
@@ -63,26 +63,40 @@ var calculateCpu = function(lastCpuSnap, onGetAvg){
     }, Math.max(context.appConfig.cpuInterval, 1) * 1000);
 };
 
+var calculateMem = function(onGetAvg){
+    setTimeout(() => {
+        var newFreeMem = os.freemem();
+        var avgMem = {
+            time: new Date(),
+            free: os.freemem(),
+            use: os.totalmem() - os.freemem(),
+            percent: (100 - (os.freemem() / os.totalmem() * 100)).toFixed(2)
+        };
+        onGetAvg(avgMem);
+
+        calculateMem(onGetAvg);
+    }, Math.max(context.appConfig.cpuInterval, 1) * 1000);
+};
+
 var Service = function(){
     var buffer = {
-        cpu: []
+        cpu: [],
+        mem: []
     };
     calculateCpu(getCpuSnapshot(), (data) => {
         buffer.cpu.push(data);
+    });
+    calculateMem((data) => {
+        buffer.mem.push(data);
     });
 
     return {
         get: () => {
             var info = {
                 cpus: buffer.cpu,
-                freemem: {
-                    max: 0,
-                    min: 0
-                }
+                mem: buffer.mem
             };
 
-            info.freemem = os.freemem();
-            info.loadAvg = os.loadavg();
             return info;
         }
     };

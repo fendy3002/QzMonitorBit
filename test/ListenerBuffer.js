@@ -1,5 +1,6 @@
 var assert = require('assert');
-var buffer = require('../server/listener/buffer.js').default;
+var buffer = require('../server/listener/bufferBase.js').default;
+var httpBuffer = require('../server/listener/bufferBase.js').default;
 
 describe('getFilename', function() {
     it('should return expected', function() {
@@ -35,7 +36,7 @@ describe('getBuffer', function() {
             }}}
         ];
 
-        var actual = buffer.getGroup(data);
+        var actual = buffer.getGroup(data, httpBuffer.onNewGroup, httpBuffer.onExistingGroup);
         var expected = { "_1000": { 
             success: 3, error: 0, longest: 1600 
         } };
