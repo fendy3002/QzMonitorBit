@@ -6,12 +6,38 @@ import dateFormat from 'dateformat';
 import notify from '../notify';
 import context from "../context.js";
 
-var Service = (module) => {
+var onNewGroup = function(currentBuffer){
+    var success = currentBuffer.success ? true : false;
+    var time = (currentBuffer.success || currentBuffer.error).time;
+    return {
+        success: success ? 1 : 0,
+        error: success ? 0 : 1,
+        longest: time.diff
+    };
+};
+
+var onExistingGroup = function(old, currentBuffer){
+    var success = currentBuffer.success ? true : false;
+    var time = (currentBuffer.success || currentBuffer.error).time;
+    return {
+        success: old.success += success ? 1 : 0,
+        error: old.error += success ? 0 : 1,
+        longest: old.longest = success ? 
+            Math.max(group[key].longest, time.diff) : 
+            group[key].longest
+    };
+};
+
+var getTime = function(currentBuffer){
+    return (currentBuffer.success || currentBuffer.error).time;
+};
+
+var Service = () => {
     var appConfig = context.appConfig;
 
     var buffer = [];
     var storage = '../../storage/log';
-    var folder = path.join(__dirname, storage, module.filename);
+    var folder = path.join(__dirname, storage, "MonitorBit");
     var lastFlush = new Date();
     var notifier = notify(module);
 
@@ -45,10 +71,8 @@ var Service = (module) => {
         });
     };
 
-    var success = (actual) => {
-        buffer.push({
-            "success": actual
-        });
+    var success = (info) => {
+        buffer = buffer.concat(info);
         if(new Date().getTime() - lastFlush.getTime() > (appConfig.logEvery * 1000)){
             var toSendBuffer = buffer;
             flush();

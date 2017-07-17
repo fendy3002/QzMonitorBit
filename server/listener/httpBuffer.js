@@ -8,7 +8,7 @@ import bufferBase from './bufferBase.js';
 
 var onNewGroup = function(currentBuffer){
     var success = currentBuffer.success ? true : false;
-    var time = (currentBuffer.success || currentBuffer.error).time;
+    var time = getTime(currentBuffer);
     return {
         success: success ? 1 : 0,
         error: success ? 0 : 1,
@@ -18,14 +18,18 @@ var onNewGroup = function(currentBuffer){
 
 var onExistingGroup = function(old, currentBuffer){
     var success = currentBuffer.success ? true : false;
-    var time = (currentBuffer.success || currentBuffer.error).time;
+    var time = getTime(currentBuffer);
     return {
         success: old.success += success ? 1 : 0,
         error: old.error += success ? 0 : 1,
         longest: old.longest = success ? 
-            Math.max(group[key].longest, time.diff) : 
-            group[key].longest
+            Math.max(old.longest, time.diff) : 
+            old.longest
     };
+};
+
+var getTime = function(currentBuffer){
+    return (currentBuffer.success || currentBuffer.error).time;
 };
 
 var Service = (module) => {
@@ -38,7 +42,7 @@ var Service = (module) => {
     var notifier = notify(module);
 
     var writeBuffer = function(buffer, callback){
-        var groupBuffer = bufferBase.getGroup(buffer, onNewGroup, onExistingGroup);
+        var groupBuffer = bufferBase.getGroup(buffer, getTime, onNewGroup, onExistingGroup);
         var earliest = lo.minBy(buffer, k=> (k.success || k.error).time.start);
 
         var fileName = bufferBase.getFilename((earliest.success || earliest.error).time.start);
@@ -126,5 +130,6 @@ var Service = (module) => {
 
 Service.onNewGroup = onNewGroup;
 Service.onExistingGroup = onExistingGroup;
+Service.getTime = getTime;
 
 export default Service;

@@ -22,10 +22,11 @@ function pad(num, size) {
     return s.substr(s.length-size);
 };
 
-var getGroup = function(buffer, onNew, onExisting){
+var getGroup = function(buffer, getTime, onNew, onExisting){
     var group = {};
     for(var i = 0; i < buffer.length; i++){
         var currentBuffer = buffer[i];
+        var time = getTime(currentBuffer);
         var hour = time.start.getHours();
         var minute = Math.ceil(time.start.getMinutes() / 10) * 10;
 

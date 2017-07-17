@@ -2,6 +2,18 @@ var os = require('os');
 import lo from 'lodash';
 import context from '../context.js';
 
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+};
+
+function getGroupKey(time){
+    var hour = time.getHours();
+    var minute = Math.ceil(time.getMinutes() / 10) * 10;
+
+    return "_" + pad(hour, 2).toString() + pad(minute, 2).toString();
+}
+
 var getCpuSnapshot = function(){
     var cpus = {};
     lo.forEach(os.cpus(), (cpu, ix) => {
@@ -46,7 +58,7 @@ var getCpuAvg = function(last, now){
             time: new Date(),
             idle: idleDiff,
             ticks: ticksDiff,
-            avg: (100 - (100 * idleDiff / ticksDiff)).toFixed(2)
+            percent: (100 - (100 * idleDiff / ticksDiff)).toFixed(2)
         };
     });
     return result;
@@ -78,6 +90,20 @@ var calculateMem = function(onGetAvg){
     }, Math.max(context.appConfig.cpuInterval, 1) * 1000);
 };
 
+var groupByTenMinute = function(buffers){
+    var result = {};
+    lo.forEach(buffers, buffer => {
+        lo.forOwn(buffer, (cpu, cpuNo) => {
+            console.log("cpu: " + cpuNo, cpu);
+            var groupKey = getGroupKey(cpu.time);
+            result[groupKey] = result[groupKey] || {};
+            result[groupKey][cpuNo] = result[groupKey][cpuNo] || [];
+            result[groupKey][cpuNo].push(cpu);
+        })
+    });
+    return result;
+};
+
 var Service = function(){
     var buffer = {
         cpu: [],
@@ -92,8 +118,19 @@ var Service = function(){
 
     return {
         get: () => {
+            var cpus = {};
+            lo.forOwn(groupByTenMinute(buffer.cpu), (group, key) => {
+                cpus[key] = {};
+                lo.forOwn(group, (val, cpuNo) => {
+                    var minPercent = lo.minBy(val, k=> k.percent);
+                    cpus[key][cpuNo] = {
+                        minUsage: minPercent.percent,
+                        maxUsage: lo.maxBy(val, k=> k.percent).percent
+                    }
+                });
+            })
             var info = {
-                cpus: buffer.cpu,
+                cpus: cpus,
                 mem: buffer.mem
             };
 
