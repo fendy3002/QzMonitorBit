@@ -9,7 +9,7 @@ function pad(num, size) {
 
 function getGroupKey(time){
     var hour = time.getHours();
-    var minute = Math.ceil(time.getMinutes() / 10) * 10;
+    var minute = Math.floor(time.getMinutes() / 10) * 10;
 
     return "_" + pad(hour, 2).toString() + pad(minute, 2).toString();
 }
@@ -90,11 +90,10 @@ var calculateMem = function(onGetAvg){
     }, Math.max(context.appConfig.cpuInterval, 1) * 1000);
 };
 
-var groupByTenMinute = function(buffers){
+var cpuGroupByTenMinute = function(buffers){
     var result = {};
     lo.forEach(buffers, buffer => {
         lo.forOwn(buffer, (cpu, cpuNo) => {
-            console.log("cpu: " + cpuNo, cpu);
             var groupKey = getGroupKey(cpu.time);
             result[groupKey] = result[groupKey] || {};
             result[groupKey][cpuNo] = result[groupKey][cpuNo] || [];
@@ -102,6 +101,21 @@ var groupByTenMinute = function(buffers){
         })
     });
     return result;
+};
+
+var cpuGroupToInfo = function(grouped){
+    var cpus = {};
+    lo.forOwn(grouped, (group, key) => {
+        cpus[key] = {};
+        lo.forOwn(group, (val, cpuNo) => {
+            var minPercent = lo.minBy(val, k=> k.percent);
+            cpus[key][cpuNo] = {
+                minUsage: minPercent.percent,
+                maxUsage: lo.maxBy(val, k=> k.percent).percent
+            }
+        });
+    });
+    return cpus;
 };
 
 var Service = function(){
@@ -118,19 +132,8 @@ var Service = function(){
 
     return {
         get: () => {
-            var cpus = {};
-            lo.forOwn(groupByTenMinute(buffer.cpu), (group, key) => {
-                cpus[key] = {};
-                lo.forOwn(group, (val, cpuNo) => {
-                    var minPercent = lo.minBy(val, k=> k.percent);
-                    cpus[key][cpuNo] = {
-                        minUsage: minPercent.percent,
-                        maxUsage: lo.maxBy(val, k=> k.percent).percent
-                    }
-                });
-            })
             var info = {
-                cpus: cpus,
+                cpus: cpuGroupToInfo(cpuGroupByTenMinute(buffer.cpu)),
                 mem: buffer.mem
             };
 
@@ -138,5 +141,9 @@ var Service = function(){
         }
     };
 };
+Service.getCpuSnapshot = getCpuSnapshot;
+Service.getCpuAvg = getCpuAvg;
+Service.cpuGroupByTenMinute = cpuGroupByTenMinute;
+Service.cpuGroupToInfo = cpuGroupToInfo;
 
 export default Service;

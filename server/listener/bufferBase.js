@@ -28,7 +28,7 @@ var getGroup = function(buffer, getTime, onNew, onExisting){
         var currentBuffer = buffer[i];
         var time = getTime(currentBuffer);
         var hour = time.start.getHours();
-        var minute = Math.ceil(time.start.getMinutes() / 10) * 10;
+        var minute = Math.floor(time.start.getMinutes() / 10) * 10;
 
         var key = "_" + pad(hour, 2).toString() + pad(minute, 2).toString();
 
