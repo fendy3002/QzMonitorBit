@@ -4,6 +4,7 @@ import JSON5 from 'json5';
 import invoker from '../invoker';
 import listenerRaw from '../listener';
 import monitorBit from '../machine/info.js';
+import context from '../context.js';
 
 var Service = function(folder){
     var files = fs.readdirSync(folder);
@@ -17,7 +18,9 @@ var Service = function(folder){
         invoker(module, listener);
     }
 
-    monitorBit().watch();
+    if(context.appConfig.monitorbit){
+        monitorBit().watch();
+    }
 };
 
 var ReadModule = function(file){

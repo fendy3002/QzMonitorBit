@@ -6,6 +6,7 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha --require babel-core/register",
     "start": "./node_modules/.bin/babel-watch server/app.js",
+    "postinstall": "node ./exec.js prepare",
     "win-start": "./node_modules/.bin/babel-watch.cmd server/app.js"
   },
   "repository": {

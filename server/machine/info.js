@@ -2,6 +2,7 @@ var os = require('os');
 import lo from 'lodash';
 import context from '../context.js';
 import loggerRaw from './logger.js';
+import notifyRaw from './notify.js';
 
 function pad(num, size) {
     var s = "000000000" + num;
@@ -186,6 +187,7 @@ var Service = function(){
         mem: []
     };
     var logger = loggerRaw();
+    var notify = notifyRaw();
     calculateCpu(null, (data) => {
         buffer.cpu.push(data);
     });
@@ -205,16 +207,14 @@ var Service = function(){
             currentDate.getHours(),
             0, 0);
 
-        logger.write(info, ()=>{
-            console.log("buffer", buffer);
-            
+        logger.write(info, ()=>{            
             setTimeout(function() {
                 watch();
             }, Math.max(context.appConfig.logEvery, 1) * 1000);
             buffer.cpu = lo.filter(buffer.cpu, k=> k.time >= currentHour);
             buffer.mem = lo.filter(buffer.mem, k=> k.time >= currentHour);
         });
-
+        notify.info(info);
     };
 
     return {
