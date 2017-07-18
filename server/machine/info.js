@@ -13,9 +13,9 @@ function pad(num, size) {
 function getGroupKey(time){
     var hour = time.getHours();
     var minute = Math.floor(time.getMinutes() / 10) * 10;
-    var bufferDateFormat = dateFormat(time, "mmmdd_hhMM");
+    var bufferDateFormat = dateFormat(time, "mmmdd_hh");
 
-    return "_" + bufferDateFormat; //pad(hour, 2).toString() + pad(minute, 2).toString();
+    return "_" + bufferDateFormat + pad(minute, 2).toString();
 }
 
 var getCpuSnapshot = function(){

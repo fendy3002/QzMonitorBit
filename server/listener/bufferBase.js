@@ -30,8 +30,8 @@ var getGroup = function(buffer, getTime, onNew, onExisting){
         var hour = time.start.getHours();
         var minute = Math.floor(time.start.getMinutes() / 10) * 10;
 
-        var bufferDateFormat = dateFormat(time.start, "mmmdd_hhMM");
-        var key = "_" + bufferDateFormat;//pad(hour, 2).toString() + pad(minute, 2).toString();
+        var bufferDateFormat = dateFormat(time.start, "mmmdd_hh");
+        var key = "_" + bufferDateFormat + pad(minute, 2).toString();
 
         if(!group[key]){
             group[key] = onNew(currentBuffer);
