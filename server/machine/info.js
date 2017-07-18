@@ -1,5 +1,6 @@
 var os = require('os');
 import lo from 'lodash';
+import dateFormat from 'dateformat';
 import context from '../context.js';
 import loggerRaw from './logger.js';
 import notifyRaw from './notify.js';
@@ -12,8 +13,9 @@ function pad(num, size) {
 function getGroupKey(time){
     var hour = time.getHours();
     var minute = Math.floor(time.getMinutes() / 10) * 10;
+    var bufferDateFormat = dateFormat(time, "mmmdd_hhMM");
 
-    return "_" + pad(hour, 2).toString() + pad(minute, 2).toString();
+    return "_" + bufferDateFormat; //pad(hour, 2).toString() + pad(minute, 2).toString();
 }
 
 var getCpuSnapshot = function(){
