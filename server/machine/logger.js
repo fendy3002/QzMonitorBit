@@ -61,18 +61,45 @@ var Service = () => {
                     }
                 }
                 var toWrite = mergeExisting(existing, buffer);
-                console.log("toWrite", toWrite);
                 fs.writeFile(fullPath, 
-                    JSON.stringify(existing, null, 2), 
+                    JSON.stringify(toWrite, null, 2), 
                     'utf8', callback);
             });
         });
     };
 
     var write = function(buffer, callback){
-        console.log("buffer", buffer);
         if(new Date().getDay() == 1 && new Date().getHours() == 0){
+            var yesterday = {
+                cpu: {},
+                mem: {}
+            };
+            var today = {
+                cpu: {},
+                mem: {}
+            };
 
+            lo.forOwn(buffer.cpu, (group, key) => {
+                if(key.startsWith("_23")){
+                    yesterday[key] = group;
+                }
+                else{
+                    today[key] = group;
+                }
+            });
+            lo.forOwn(buffer.mem, (group, key) => {
+                if(key.startsWith("_23")){
+                    yesterday[key] = group;
+                }
+                else{
+                    today[key] = group;
+                }
+            });
+            
+            var yesterdayDate = new Date();
+            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+            writeBuffer(yesterdayDate, yesterday, callback);
+            writeBuffer(new Date(), today, callback);
         }
         else{
             writeBuffer(new Date(), buffer, callback);
