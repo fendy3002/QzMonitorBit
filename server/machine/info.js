@@ -1,6 +1,7 @@
 var os = require('os');
 import lo from 'lodash';
 import context from '../context.js';
+import loggerRaw from './logger.js';
 
 function pad(num, size) {
     var s = "000000000" + num;
@@ -65,27 +66,27 @@ var getCpuAvg = function(last, now){
 };
 
 var calculateCpu = function(lastCpuSnap, onGetAvg){
+    var newCpuSnap = getCpuSnapshot();
+    if(lastCpuSnap){
+        var avgCpu = getCpuAvg(lastCpuSnap, newCpuSnap);
+        onGetAvg(avgCpu);
+    }
     setTimeout(() => {
-        var newCpuSnap = getCpuSnapshot();
-        if(lastCpuSnap){
-            var avgCpu = getCpuAvg(lastCpuSnap, newCpuSnap);
-            onGetAvg(avgCpu);
-        }
         calculateCpu(newCpuSnap, onGetAvg);
     }, Math.max(context.appConfig.cpuInterval, 1) * 1000);
 };
 
 var calculateMem = function(onGetAvg){
-    setTimeout(() => {
-        var newFreeMem = os.freemem();
-        var avgMem = {
-            time: new Date(),
-            free: os.freemem(),
-            use: os.totalmem() - os.freemem(),
-            percent: (100 - (os.freemem() / os.totalmem() * 100)).toFixed(2)
-        };
-        onGetAvg(avgMem);
+    var newFreeMem = os.freemem();
+    var avgMem = {
+        time: new Date(),
+        free: os.freemem(),
+        use: os.totalmem() - os.freemem(),
+        percent: (100 - (os.freemem() / os.totalmem() * 100)).toFixed(2)
+    };
+    onGetAvg(avgMem);
 
+    setTimeout(() => {
         calculateMem(onGetAvg);
     }, Math.max(context.appConfig.cpuInterval, 1) * 1000);
 };
@@ -95,7 +96,9 @@ var cpuGroupByTenMinute = function(buffers){
     lo.forEach(buffers, buffer => {
         lo.forOwn(buffer, (cpu, cpuNo) => {
             var groupKey = getGroupKey(cpu.time);
-            result[groupKey] = result[groupKey] || {};
+            result[groupKey] = result[groupKey] || {
+                time: cpu.time
+            };
             result[groupKey][cpuNo] = result[groupKey][cpuNo] || [];
             result[groupKey][cpuNo].push(cpu);
         })
@@ -106,8 +109,9 @@ var cpuGroupByTenMinute = function(buffers){
 var cpuGroupToInfo = function(grouped){
     var cpus = {};
     lo.forOwn(grouped, (group, key) => {
-        cpus[key] = {};
+        cpus[key] = { time: group.time };
         lo.forOwn(group, (val, cpuNo) => {
+            if(cpuNo == "time"){ return; }
             var minPercent = lo.minBy(val, k=> k.percent);
             cpus[key][cpuNo] = {
                 minUsage: minPercent.percent,
@@ -118,27 +122,85 @@ var cpuGroupToInfo = function(grouped){
     return cpus;
 };
 
+var memGroupByTenMinute = function(buffers){
+    var result = {};
+    lo.forEach(buffers, buffer => {
+        var groupKey = getGroupKey(buffer.time);
+        result[groupKey] = result[groupKey] || {
+            time: buffer.time,
+            mem: []
+        };
+        result[groupKey].mem.push(buffer);
+    });
+    return result;
+};
+var memGroupToInfo = function(grouped){
+    var mems = {};
+    var oneGb = 1024 * 1024 * 1024;
+    
+    lo.forOwn(grouped, (group, key) => {
+        var minFree = 0;
+        var maxFree = 0;
+        var minUse = 0;
+        var maxUse = 0;
+        var minPercent = 0;
+        var maxPercent = 0;
+        lo.forEach(group.mem, (mem, ix) => {
+            if(ix == 0){
+                minFree = mem.free;
+                minUse = mem.use;
+                minPercent = mem.percent;
+            }else{
+                minFree = minFree < mem.free ? minFree : mem.free;
+                minUse = minUse < mem.use ? minUse : mem.use;
+                minPercent = minPercent < mem.percent ? minPercent : mem.percent;
+
+                maxFree = maxFree > mem.free ? maxFree : mem.free;
+                maxUse = maxUse > mem.use ? maxUse : mem.use;
+                maxPercent = maxPercent > mem.percent ? maxPercent : mem.percent;
+            }
+        })
+        mems[key] = {
+            time: group.time,
+            minFreeGb: (minFree / oneGb).toFixed(2),
+            maxFreeGb: (maxFree / oneGb).toFixed(2),
+            minUseGb: (minUse / oneGb).toFixed(2),
+            maxUseGb: (maxUse / oneGb).toFixed(2),
+            minPercent: minPercent,
+            maxPercent: maxPercent
+        }
+    });
+    return mems;
+};
+
 var Service = function(){
     var buffer = {
         cpu: [],
         mem: []
     };
-    calculateCpu(getCpuSnapshot(), (data) => {
+    var logger = loggerRaw();
+    calculateCpu(null, (data) => {
         buffer.cpu.push(data);
     });
     calculateMem((data) => {
         buffer.mem.push(data);
     });
 
-    return {
-        get: () => {
-            var info = {
-                cpus: cpuGroupToInfo(cpuGroupByTenMinute(buffer.cpu)),
-                mem: buffer.mem
-            };
+    var watch = () => {
+        var info = {
+            cpu: cpuGroupToInfo(cpuGroupByTenMinute(buffer.cpu)),
+            mem: memGroupToInfo(memGroupByTenMinute(buffer.mem)) 
+        };
+        
+        logger.write(info, ()=>{
+            setTimeout(function() {
+                watch();
+            }, Math.max(context.appConfig.logEvery, 1) * 1000);
+        });
+    };
 
-            return info;
-        }
+    return {
+        watch
     };
 };
 Service.getCpuSnapshot = getCpuSnapshot;
