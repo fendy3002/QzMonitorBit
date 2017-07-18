@@ -48,7 +48,9 @@ var getCpuSnapshot = function(){
 };
 
 var getCpuAvg = function(last, now){
-    var result = {};
+    var result = {
+        time: new Date()        
+    };
     lo.forOwn(last, (lastCpu, key) => {
         var nowCpu = now[key];
         //Calculate the difference in idle and total time between the measures
@@ -56,7 +58,6 @@ var getCpuAvg = function(last, now){
         var ticksDiff = nowCpu.ticks - lastCpu.ticks;
 
         result[key] = {
-            time: new Date(),
             idle: idleDiff,
             ticks: ticksDiff,
             percent: (100 - (100 * idleDiff / ticksDiff)).toFixed(2)
@@ -94,14 +95,20 @@ var calculateMem = function(onGetAvg){
 var cpuGroupByTenMinute = function(buffers){
     var result = {};
     lo.forEach(buffers, buffer => {
+        var groupKey = getGroupKey(buffer.time);
+        var group = {
+            time: buffer.time
+        };
+        if(result[groupKey]){
+            var group = result[groupKey];
+        }
+        
         lo.forOwn(buffer, (cpu, cpuNo) => {
-            var groupKey = getGroupKey(cpu.time);
-            result[groupKey] = result[groupKey] || {
-                time: cpu.time
-            };
-            result[groupKey][cpuNo] = result[groupKey][cpuNo] || [];
-            result[groupKey][cpuNo].push(cpu);
-        })
+            if(cpuNo == "time"){ return; }
+            group[cpuNo] = group[cpuNo] || [];
+            group[cpuNo].push(cpu);
+        });
+        result[groupKey] = group;
     });
     return result;
 };
@@ -191,12 +198,23 @@ var Service = function(){
             cpu: cpuGroupToInfo(cpuGroupByTenMinute(buffer.cpu)),
             mem: memGroupToInfo(memGroupByTenMinute(buffer.mem)) 
         };
-        
+        var currentDate = new Date();
+        var currentHour = new Date(currentDate.getFullYear(),
+            currentDate.getMonth(),
+            currentDate.getDate(),
+            currentDate.getHours(),
+            0, 0);
+
         logger.write(info, ()=>{
+            console.log("buffer", buffer);
+            
             setTimeout(function() {
                 watch();
             }, Math.max(context.appConfig.logEvery, 1) * 1000);
+            buffer.cpu = lo.filter(buffer.cpu, k=> k.time >= currentHour);
+            buffer.mem = lo.filter(buffer.mem, k=> k.time >= currentHour);
         });
+
     };
 
     return {

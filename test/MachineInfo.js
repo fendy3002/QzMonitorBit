@@ -29,40 +29,37 @@ describe('getCpuAvg', function() {
 describe('cpuGroupByTenMinute', function() {
     it('should convert array of cpu info to grouped one', function(done){
         var buffer = [{
+            "time": new Date("2017-07-17T01:01:01"),            
             "1": {
-                "time": new Date("2017-07-17T01:01:01"),
                 "idle": 5000,
                 "ticks": 5100,
                 "percent": "1.96"
             },
             "all": {
-                "time": new Date("2017-07-17T01:01:01"),
                 "idle": 5000,
                 "ticks": 5100,
                 "percent": "1.96"
             }
         }, {
+            "time": new Date("2017-07-17T01:02:00"),
             "1": {
-                "time": new Date("2017-07-17T01:01:00"),
                 "idle": 5000,
                 "ticks": 5100,
                 "percent": "1.96"
             },
             "all": {
-                "time": new Date("2017-07-17T01:01:00"),
                 "idle": 5000,
                 "ticks": 5100,
                 "percent": "1.96"
             }
         }, {
+            "time": new Date("2017-07-17T01:20:00"),
             "1": {
-                "time": new Date("2017-07-17T01:20:00"),
                 "idle": 5000,
                 "ticks": 5100,
                 "percent": "1.96"
             },
             "all": {
-                "time": new Date("2017-07-17T01:20:00"),
                 "idle": 5000,
                 "ticks": 5100,
                 "percent": "1.96"
