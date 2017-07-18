@@ -4,7 +4,7 @@ import lo from 'lodash';
 import JSON5 from 'json5';
 import bufferBase from '../listener/bufferBase.js';
 import dateFormat from 'dateformat';
-import context from "../context.js";
+
 var mergeExisting = (existing, info) => {
     var result = {};
     var mergeCpu = (existing, info) => {
@@ -40,8 +40,6 @@ var mergeExisting = (existing, info) => {
     return result;
 };
 var Service = () => {
-    var appConfig = context.appConfig;
-
     var storage = '../../storage/log';
     var folder = path.join(__dirname, storage, "MonitorBit");
 
@@ -67,39 +65,47 @@ var Service = () => {
             });
         });
     };
+    var separateByDate = function(buffer){
+        var yesterday = {
+            cpu: {},
+            mem: {}
+        };
+        var today = {
+            cpu: {},
+            mem: {}
+        };
+
+        lo.forOwn(buffer.cpu, (group, key) => {
+            if(key.startsWith("_23")){
+                yesterday.cpu[key] = group;
+            }
+            else{
+                today.cpu[key] = group;
+            }
+        });
+        lo.forOwn(buffer.mem, (group, key) => {
+            if(key.startsWith("_23")){
+                yesterday.mem[key] = group;
+            }
+            else{
+                today.mem[key] = group;
+            }
+        });
+
+        return {
+            yesterday,
+            today
+        }
+    };
 
     var write = function(buffer, callback){
         if(new Date().getDay() == 1 && new Date().getHours() == 0){
-            var yesterday = {
-                cpu: {},
-                mem: {}
-            };
-            var today = {
-                cpu: {},
-                mem: {}
-            };
-
-            lo.forOwn(buffer.cpu, (group, key) => {
-                if(key.startsWith("_23")){
-                    yesterday[key] = group;
-                }
-                else{
-                    today[key] = group;
-                }
-            });
-            lo.forOwn(buffer.mem, (group, key) => {
-                if(key.startsWith("_23")){
-                    yesterday[key] = group;
-                }
-                else{
-                    today[key] = group;
-                }
-            });
+            var separated = separateByDate(buffer);
             
             var yesterdayDate = new Date();
             yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-            writeBuffer(yesterdayDate, yesterday, callback);
-            writeBuffer(new Date(), today, callback);
+            writeBuffer(yesterdayDate, separated.yesterday, callback);
+            writeBuffer(new Date(), separated.today, callback);
         }
         else{
             writeBuffer(new Date(), buffer, callback);
@@ -107,7 +113,8 @@ var Service = () => {
     };
 
     return {
-        write
+        write,
+        separateByDate
     };
 };
 
