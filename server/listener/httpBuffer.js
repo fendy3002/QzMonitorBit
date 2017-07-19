@@ -75,6 +75,7 @@ var Service = (module) => {
         buffer.push({
             "success": actual
         });
+        notifier.recover(actual);
         if(new Date().getTime() - lastFlush.getTime() > (appConfig.logEvery * 1000)){
             var toSendBuffer = buffer;
             flush();

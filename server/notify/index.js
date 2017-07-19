@@ -25,9 +25,15 @@ var Service = function(module, callback){
             n.flush(buffer);
         });
     };
+    var recover = function(buffer){
+        lo.forEach(notifiers, n=> {
+            n.recover(buffer);
+        });
+    };
 
     return {
         error,
+        recover,
         flush
     };
 };

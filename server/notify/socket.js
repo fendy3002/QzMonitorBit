@@ -15,10 +15,14 @@ var Service = function(module){
     var flush = function(buffer){
         infoNsp.emit('message', buffer);
     };
+    var recover = function(buffer){
+        infoNsp.emit('message', buffer);
+    }
 
     return {
         error,
-        flush
+        flush,
+        recover
     };
 };
 
