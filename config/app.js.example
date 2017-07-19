@@ -3,12 +3,15 @@ module.exports = {
     "logEvery": 600, // in second
     "cpuInterval": 5, // in second
     "monitorbit": true, // set to false if don't want to monitor system / server
-    "error": {
+    "listener":{
         "http": {
-            "status": "Response status code: %s",
-            "different": "Response different than expected",
-            "notJSON": "Response body is incorrect as JSON",
-            "http": "Cannot perform http request"
+            "timeout": 2, // in second
+            "error": {
+                "status": "Response status code: %s",
+                "different": "Response different than expected",
+                "notJSON": "Response body is incorrect as JSON",
+                "http": "Cannot perform http request"
+            }
         }
     },
     "escalation": {
@@ -43,7 +46,7 @@ module.exports = {
             "recover": {
                 "subject": '%NAME% at %NOW% is now online', // Subject line
                 "text": '%NAME% at %ACCESS%  is now online', // plain text body
-                "html": '<b>%NAME%</b> at %ACCESS% is now online, with data:\n' + 
+                "html": '<b>%NAME%</b> at %ACCESS% has been recovered and is now online, with data:\n' + 
                     '<pre/>%ACTUAL%</pre>' // html body
             }
         }

@@ -22,7 +22,7 @@ var Service = (listener) => function(context, module){
         }
         else{
             var messageTemplate = {
-                ...appConfig.error.http,
+                ...appConfig.listener.http.error,
                 ...module.error
             };
             var message = messageTemplate[error];

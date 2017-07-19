@@ -4,16 +4,19 @@ var notify = require('../server/notify/index.js').default;
 
 describe('sendEmail', function() {
     it('should not produce error', function(done) {
-        this.timeout(5000);
+        this.timeout(7000);
         context.appConfig = {
             "port": 3000,
             "logEvery": 10, // in second
-            "error": {
+            "listener":{
                 "http": {
-                    "status": "Response status code: %s",
-                    "different": "Response different than expected",
-                    "notJSON": "Response body is incorrect as JSON",
-                    "http": "Cannot perform http request"
+                    "timeout": 2, // in second
+                    "error": {
+                        "status": "Response status code: %s",
+                        "different": "Response different than expected",
+                        "notJSON": "Response body is incorrect as JSON",
+                        "http": "Cannot perform http request"
+                    }
                 }
             },
             "escalation": {
