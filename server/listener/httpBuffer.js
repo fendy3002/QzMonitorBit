@@ -85,7 +85,6 @@ var Service = (module) => {
         buffer.push({
             "error": actual
         });
-        console.log("Error", actual);
         notifier.error(actual);
         if(new Date().getTime() - lastFlush.getTime() > (appConfig.logEvery * 1000)){
             var toSendBuffer = buffer;

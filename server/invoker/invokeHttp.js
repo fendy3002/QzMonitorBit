@@ -4,10 +4,10 @@ var url = require('url');
 import verify from "./verify.js";
 import JSON5 from 'json5';
 import sprintf from 'sprintf-js';
-import appConfig from '../../config/app.js';
+import appContext from '../context.js';
 
 var Service = (listener) => function(context, module){
-    var timeout = (module.timeout || appConfig.listener.http.timeout) * 1000;
+    var timeout = (module.timeout || appContext.appConfig.listener.http.timeout) * 1000;
     
     var requestHandler = null;
     var moduleUrl = url.parse(module.url);
@@ -28,7 +28,7 @@ var Service = (listener) => function(context, module){
         }
         else{
             var messageTemplate = {
-                ...appConfig.listener.http.error,
+                ...appContext.appConfig.listener.http.error,
                 ...module.error
             };
             var message = messageTemplate[error] || error;
