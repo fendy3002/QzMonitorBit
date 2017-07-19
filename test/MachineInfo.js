@@ -67,8 +67,8 @@ describe('cpuGroupByTenMinute', function() {
         }];
         
         var grouped = machineInfo.cpuGroupByTenMinute(buffer);
-        assert.equal(2, grouped["_0800"]["1"].length);
-        assert.equal(1, grouped["_0820"]["1"].length);
+        assert.equal(2, grouped["_Jul17_0800"]["1"].length);
+        assert.equal(1, grouped["_Jul17_0820"]["1"].length);
         done();
     });
 });
@@ -76,7 +76,7 @@ describe('cpuGroupByTenMinute', function() {
 describe('cpuGroupToInfo', function() {
     it("should show average", function(done){
         var grouped = {
-            "_0800": {
+            "_Jul17_0800": {
                 "1": [
                     {
                         "time": "2017-07-17T01:01:01.000Z",
@@ -106,7 +106,7 @@ describe('cpuGroupToInfo', function() {
                     }
                 ]
             },
-            "_0820": {
+            "_Jul17_0820": {
                 "1": [
                     {
                         "time": "2017-07-17T01:20:00.000Z",
@@ -127,10 +127,10 @@ describe('cpuGroupToInfo', function() {
         };
 
         var cpuInfo = machineInfo.cpuGroupToInfo(grouped);
-        assert.equal(true, cpuInfo._0800.all.minUsage >= 0 && cpuInfo._0800.all.minUsage <= 100);
-        assert.equal(true, cpuInfo._0800.all.maxUsage >= 0 && cpuInfo._0800.all.maxUsage <= 100);
-        assert.equal(true, cpuInfo._0820.all.minUsage >= 0 && cpuInfo._0820.all.minUsage <= 100);
-        assert.equal(true, cpuInfo._0820.all.maxUsage >= 0 && cpuInfo._0820.all.maxUsage <= 100);
+        assert.equal(true, cpuInfo._Jul17_0800.all.minUsage >= 0 && cpuInfo._Jul17_0800.all.minUsage <= 100);
+        assert.equal(true, cpuInfo._Jul17_0800.all.maxUsage >= 0 && cpuInfo._Jul17_0800.all.maxUsage <= 100);
+        assert.equal(true, cpuInfo._Jul17_0820.all.minUsage >= 0 && cpuInfo._Jul17_0820.all.minUsage <= 100);
+        assert.equal(true, cpuInfo._Jul17_0820.all.maxUsage >= 0 && cpuInfo._Jul17_0820.all.maxUsage <= 100);
         done();
     });
 });

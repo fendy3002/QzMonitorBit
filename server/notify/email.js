@@ -29,15 +29,30 @@ var getText = function(module, actual, message){
 var Service = function(module, moduleMail, callback){
     var appConfig = context.appConfig;
     var mailConfig = {
-        "config": appConfig.mail[moduleMail.use], 
+        "sender": appConfig.sender[moduleMail.use],
+        "mail": appConfig.mail[module.type],
         "to": moduleMail.to
     };
 
     var error = function(actual){
-        var transporter = nodemailer.createTransport(mailConfig.config.transporter);
-        var body = getText(module, actual, mailConfig.config.message)
+        var transporter = nodemailer.createTransport(mailConfig.sender.transporter);
+        var body = getText(module, actual, mailConfig.mail.error);
         var mailOptions = {
-            from: mailConfig.config.from,
+            from: mailConfig.sender.from,
+            to: mailConfig.to,
+            subject: body.subject,
+            text: body.text,
+            html: body.html
+        };
+        transporter.sendMail(mailOptions, function(error, info){
+            callback(error, info);
+        });
+    };
+    var recover = function(actual){
+        var transporter = nodemailer.createTransport(mailConfig.sender.transporter);
+        var body = getText(module, actual, mailConfig.mail.recover);
+        var mailOptions = {
+            from: mailConfig.sender.from,
             to: mailConfig.to,
             subject: body.subject,
             text: body.text,

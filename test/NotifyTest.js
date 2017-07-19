@@ -16,7 +16,14 @@ describe('sendEmail', function() {
                     "http": "Cannot perform http request"
                 }
             },
-            "mail": {
+            "escalation": {
+                "1": 10,
+                "2": 60, // 1 minute
+                "3": 600, // 10 minutes
+                "4": 3600, // 1 hour
+                "5": 14400 // 4 hour
+            },
+            "sender": {
                 "default": {
                     "transporter": {
                         "host": 'smtp.mailtrap.io',
@@ -27,11 +34,21 @@ describe('sendEmail', function() {
                             "pass": '4249c9f3d343bb'
                         }
                     },
-                    "from": "41aa46954237a4@inbox.mailtrap.io",
-                    "message": {
+                    "from": "username@example.com"
+                }
+            },
+            "mail": {
+                "http": {
+                    "error": {
                         "subject": '%NAME% cannot be accessed at %NOW%', // Subject line
                         "text": '%NAME% cannot be accessed by %ACCESS%', // plain text body
                         "html": '<b>%NAME%</b> cannot be accessed by %ACCESS%, with data:\n' + 
+                            '<pre/>%ACTUAL%</pre>' // html body
+                    },
+                    "recover": {
+                        "subject": '%NAME% at %NOW% is now online', // Subject line
+                        "text": '%NAME% at %ACCESS%  is now online', // plain text body
+                        "html": '<b>%NAME%</b> at %ACCESS% is now online, with data:\n' + 
                             '<pre/>%ACTUAL%</pre>' // html body
                     }
                 }

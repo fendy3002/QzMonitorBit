@@ -37,7 +37,7 @@ describe('getBuffer', function() {
         ];
         var actual = buffer.getGroup(data, httpBuffer.getTime, 
             httpBuffer.onNewGroup, httpBuffer.onExistingGroup);
-        var expected = { "_1000": { 
+        var expected = { "_Feb01_1000": { 
             success: 3, error: 0, longest: 1600 
         } };
         assert.deepEqual(actual, expected);
