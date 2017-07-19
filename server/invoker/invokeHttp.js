@@ -7,6 +7,9 @@ import appConfig from '../../config/app.js';
 
 var Service = (listener) => function(context, module){
     var invoke = null;
+    var invokeOption = {
+        url: module.url
+    };
     if(!module.method || module.method == "get") { invoke = module.url.startsWith("https") ? https.get : http.get; }
     if(module.method == "post") { invoke = module.url.startsWith("https") ? https.post : http.post; }
 
@@ -89,7 +92,7 @@ var Service = (listener) => function(context, module){
         });
     };
 
-    var handle = invoke(module.url, responseCallback);
+    var handle = invoke(invokeOption, responseCallback);
     handle.on("error", err => {
         var endTime = new Date();
         var diff = endTime.getTime() - context.start.getTime();
