@@ -30,7 +30,7 @@ var getGroup = function(buffer, getTime, onNew, onExisting){
         var hour = time.start.getHours();
         var minute = Math.floor(time.start.getMinutes() / 10) * 10;
 
-        var bufferDateFormat = dateFormat(time.start, "mmmdd_hh");
+        var bufferDateFormat = dateFormat(time.start, "mmmdd_HH");
         var key = "_" + bufferDateFormat + pad(minute, 2).toString();
 
         if(!group[key]){

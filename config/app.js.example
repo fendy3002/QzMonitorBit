@@ -5,12 +5,13 @@ module.exports = {
     "monitorbit": true, // set to false if don't want to monitor system / server
     "listener":{
         "http": {
-            "timeout": 2, // in second
+            "timeout": 5, // in second
             "error": {
                 "status": "Response status code: %s",
                 "different": "Response different than expected",
                 "notJSON": "Response body is incorrect as JSON",
-                "http": "Cannot perform http request"
+                "http": "Cannot perform http request",
+                "timeout": "Request has timed out"
             }
         }
     },

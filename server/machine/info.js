@@ -13,7 +13,7 @@ function pad(num, size) {
 function getGroupKey(time){
     var hour = time.getHours();
     var minute = Math.floor(time.getMinutes() / 10) * 10;
-    var bufferDateFormat = dateFormat(time, "mmmdd_hh");
+    var bufferDateFormat = dateFormat(time, "mmmdd_HH");
 
     return "_" + bufferDateFormat + pad(minute, 2).toString();
 }
