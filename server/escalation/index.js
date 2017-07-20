@@ -26,8 +26,8 @@ var Service = function(escalation){
     };
 
     var exec = (callback) => {
-        if(executing){ return; }
-        executing = true;
+        if(context.executing){ return; }
+        context.executing = true;
 
         if(context.times > 0){
             var currentDate = new Date();
@@ -36,7 +36,7 @@ var Service = function(escalation){
             
             var diffTime = currentDate.getTime() - context.lastExecute.getTime();
             if(diffTime < escalationTime){
-                executing = false;
+                context.executing = false;
                 return;
             }
             else{
@@ -44,7 +44,7 @@ var Service = function(escalation){
                     callback(() => {
                         context.lastExecute = new Date();
                         context.times++;
-                        executing = false;
+                        context.executing = false;
                     });
                 });
             }
@@ -54,7 +54,7 @@ var Service = function(escalation){
                 callback(() => {
                     context.lastExecute = new Date();
                     context.times++;
-                    executing = false;
+                    context.executing = false;
                 });
             });
         }
