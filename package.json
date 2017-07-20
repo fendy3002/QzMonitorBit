@@ -82,6 +82,7 @@
     "redux-thunk": "^2.1.0",
     "requirejs": "^2.3.2",
     "socket.io": "^2.0.3",
+    "socket.io-client": "^2.0.3",
     "sprintf-js": "^1.1.1",
     "sqlite3": "^3.1.8",
     "superagent": "^2.3.0",

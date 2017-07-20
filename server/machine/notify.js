@@ -8,8 +8,18 @@ var Service = function(){
     var nsp = io.of('/monitorbit');
 
     var info = function(buffer){
-        nsp.emit('message', buffer);
+        nsp.emit('signal', {
+            ...buffer,
+            "source" : "MonitorBit"
+        });
     };
+
+    nsp.on('connection', function(socket){
+        socket.emit('connected', { message: 'connected' });
+        socket.on('ping', function(data){
+            socket.emit("reply", data);
+        });
+    });
 
     return {
         info

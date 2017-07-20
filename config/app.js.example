@@ -8,10 +8,24 @@ module.exports = {
             "timeout": 5, // in second
             "error": {
                 "status": "Response status code: %s",
-                "different": "Response different than expected",
+                "different": "Response different from expected",
                 "notJSON": "Response body is incorrect as JSON",
                 "http": "Cannot perform http request",
                 "timeout": "Request has timed out"
+            }
+        },
+        "websocket":{
+            "error": {
+                "different": "Response is different from expected",
+                "disconnect": "Socket has been disconnected"
+            },
+            "connectEscalation": {
+                "1": 10,
+                "2": 60, // 1 minute
+                "3": 60 // 1 minutes
+                "4": 120 // 2 minutes
+                "5": 300 // 5 minutes
+                "after": 600 // 10 minutes
             }
         }
     },
