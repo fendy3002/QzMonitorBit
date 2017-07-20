@@ -64,6 +64,20 @@ module.exports = {
                 "html": '<b>%NAME%</b> at %ACCESS% has been recovered and is now online, with data:\n' + 
                     '<pre/>%ACTUAL%</pre>' // html body
             }
+        },
+        "websocket": {
+            "error": {
+                "subject": '%NAME% cannot be accessed at %NOW%', // Subject line
+                "text": '%NAME% cannot be accessed by %ACCESS%', // plain text body
+                "html": '<b>%NAME%</b> cannot be accessed by %ACCESS%, with data:\n' + 
+                    '<pre/>%ACTUAL%</pre>' // html body
+            },
+            "recover": {
+                "subject": '%NAME% at %NOW% is now online', // Subject line
+                "text": '%NAME% at %ACCESS%  is now online', // plain text body
+                "html": '<b>%NAME%</b> at %ACCESS% has been recovered and is now online, with data:\n' + 
+                    '<pre/>%ACTUAL%</pre>' // html body
+            }
         }
     }
 };

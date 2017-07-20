@@ -11,6 +11,10 @@
             socket2.on('message', function (data) {
                 console.log("info", data);
             });
+            var socket3 = io('http://localhost:3001/ns');
+            socket3.on('signal', function (data) {
+                console.log("monitorbit", data);
+            });
         </script>
     </body>
 </html>

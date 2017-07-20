@@ -27,10 +27,10 @@ var getGroup = function(buffer, getTime, onNew, onExisting){
     for(var i = 0; i < buffer.length; i++){
         var currentBuffer = buffer[i];
         var time = getTime(currentBuffer);
-        var hour = time.start.getHours();
-        var minute = Math.floor(time.start.getMinutes() / 10) * 10;
+        var hour = time.getHours();
+        var minute = Math.floor(time.getMinutes() / 10) * 10;
 
-        var bufferDateFormat = dateFormat(time.start, "mmmdd_HH");
+        var bufferDateFormat = dateFormat(time, "mmmdd_HH");
         var key = "_" + bufferDateFormat + pad(minute, 2).toString();
 
         if(!group[key]){

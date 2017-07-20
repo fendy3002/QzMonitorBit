@@ -39,9 +39,9 @@ var Service = (module) => {
 
     var writeBuffer = function(buffer, callback){
         var groupBuffer = bufferBase.getGroup(buffer, getTime, onNewGroup, onExistingGroup);
-        var earliest = lo.minBy(buffer, k=> (k.success || k.error).time.start);
+        var earliest = lo.minBy(buffer, k=> (k.success || k.error).time);
 
-        var fileName = bufferBase.getFilename((earliest.success || earliest.error).time.start);
+        var fileName = bufferBase.getFilename((earliest.success || earliest.error).time);
         var fullPath = path.join(folder, fileName);
         fs.mkdir(folder, "0777", (err) => {
             fs.readFile(fullPath, "utf8", (err, data) => {
@@ -92,7 +92,7 @@ var Service = (module) => {
     var flush = () => {
         // if monday morning
         if(new Date().getDay() == 1 && new Date().getHours() == 0){
-            var minDate = lo.minBy(buffer.time.start);
+            var minDate = lo.minBy(buffer.time);
             // if buffer still has sunday data
             if(minDate.getDay() == 0){
                 writeBuffer(lo.filter(buffer, k=> k.getDay() == 0), ()=>{

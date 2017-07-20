@@ -31,9 +31,36 @@ var Service = (listener) => function(module){
             error: message
         });
     };
+    var socketOption = {
+        autoConnect: false,
+        rejectUnauthorized: false,
+        transports: [ 'websocket' ],
+	    upgrade: false
+    };
+    var socket = io(module.url, socketOption);
+
     var connect = () => {
-        var socket = io(module.url);
-        console.log(socket);
+        socket.on('connect_error', (err) => {
+            console.log(err);
+            handleError({
+                error: err.toString()
+            }, "connect_error");
+        });
+        socket.on('connect_timeout', (data) => {
+            console.log("connect timeout", data);
+        });
+        socket.on('reconnect', (data) => {
+            console.log("reconnect", data);
+        });
+        socket.on('reconnect_attempt', (data) => {
+            console.log("reconnect_attempt", data);
+        });
+        socket.on('signal', (data) =>{
+            console.log("signal", data);
+        });
+        socket.on('connecting', () =>{
+            console.log("connecting");
+        });
         socket.on('connect', () =>{
             console.log("connected");
             if(escalationContext.stopHandle){ 
@@ -99,6 +126,8 @@ var Service = (listener) => function(module){
                 escalationContext.stopHandle = stop;
             });
         });
+        
+        socket.connect();
     };
 
     connect();

@@ -29,7 +29,7 @@ var onExistingGroup = function(old, currentBuffer){
 };
 
 var getTime = function(currentBuffer){
-    return (currentBuffer.success || currentBuffer.error).time;
+    return (currentBuffer.success || currentBuffer.error).time.start;
 };
 
 var Service = (module) => {
