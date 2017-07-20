@@ -5,6 +5,7 @@ import JSON5 from 'json5';
 import sprintf from 'sprintf-js';
 import appConfig from '../../config/app.js';
 import invokeHttp from './invokeHttp.js';
+import invokeWebsocket from './invokeWebsocket.js';
 
 var Service = function(module, listener){
     if(module.type == "http"){
@@ -15,6 +16,10 @@ var Service = function(module, listener){
             invokeContext = { retry : 0, start : new Date()};
             invoke(invokeContext, module);
         }, module.interval * 1000);
+    }
+    if(module.type == "websocket"){
+        var invoke = invokeWebsocket(listener);
+        invoke(module);
     }
 };
 

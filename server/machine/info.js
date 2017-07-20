@@ -160,7 +160,10 @@ var memGroupToInfo = function(grouped){
                 minFree = mem.free;
                 minUse = mem.use;
                 minPercent = mem.percent;
-            }else{
+                maxFree = mem.free;
+                maxUse = mem.use;
+                maxPercent = mem.percent;
+            } else{
                 minFree = minFree < mem.free ? minFree : mem.free;
                 minUse = minUse < mem.use ? minUse : mem.use;
                 minPercent = minPercent < mem.percent ? minPercent : mem.percent;

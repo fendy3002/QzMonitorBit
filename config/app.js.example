@@ -22,9 +22,9 @@ module.exports = {
             "connectEscalation": {
                 "1": 10,
                 "2": 60, // 1 minute
-                "3": 60 // 1 minutes
-                "4": 120 // 2 minutes
-                "5": 300 // 5 minutes
+                "3": 60, // 1 minutes
+                "4": 120, // 2 minutes
+                "5": 300, // 5 minutes
                 "after": 600 // 10 minutes
             }
         }

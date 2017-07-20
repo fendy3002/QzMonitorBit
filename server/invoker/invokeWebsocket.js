@@ -12,16 +12,34 @@ var Service = (listener) => function(module){
     var retry = 0;
     var maxRetry = module.retry || 5;
     var escalation = escalationRaw(appConfig.escalation);
-    var escalationStop = null;
+
+    var escalationContext = {
+        stopHandle: null
+    };
+    var messageTemplate = {
+        ...appConfig.listener.websocket.error,
+        ...module.error
+    };
 
     var handleError = ({on, data}, message) => {
         var time = new Date();
-
+        message = messageTemplate[message] || message;
+        listener.error({
+            on: on,
+            data: data,
+            time: time,
+            error: message
+        });
     };
-    var connect = () =>{
-        var socket = io(context.url);
+    var connect = () => {
+        var socket = io(module.url);
+        console.log(socket);
         socket.on('connect', () =>{
-            if(escalationStop){ escalationStop(); }
+            console.log("connected");
+            if(escalationContext.stopHandle){ 
+                escalationContext.stopHandle();
+                escalationContext.stopHandle = null;
+            }
             lo.forOwn(module.on, (val, evt) => {
                 socket.on(evt, (data) => {
                     if(!assertEquals(data, val.expected)){
@@ -29,6 +47,14 @@ var Service = (listener) => function(module){
                             on: evt,
                             data: data
                         }, "different");
+                    }
+                    else{
+                        listener.success(
+                            {
+                                on: evt,
+                                data: data
+                            }
+                        );
                     }
                 });
             });
@@ -50,6 +76,12 @@ var Service = (listener) => function(module){
                         }
                         else{
                             retry = 0;
+                            listener.success(
+                                {
+                                    on: evt,
+                                    data: data
+                                }
+                            );
                             setTimeout(function() {
                                 socket.emit(evt, val.data);
                             }, val.interval);
@@ -59,11 +91,12 @@ var Service = (listener) => function(module){
             });
         });
         socket.on('disconnect', () => {
+            console.log("disconnected");
             handleError({}, "disconnect");
             escalation.execRetry((done, stop) => {
                 connect();
                 done();
-                escalationStop = stop;
+                escalationContext.stopHandle = stop;
             });
         });
     };
