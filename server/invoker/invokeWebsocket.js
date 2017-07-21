@@ -41,35 +41,18 @@ var Service = (listener) => function(module){
 
     var connect = () => {
         socket.on('connect_error', (err) => {
-            console.log(err);
             handleError({
                 error: err.toString()
             }, "connect_error");
         });
-        socket.on('connect_timeout', (data) => {
-            console.log("connect timeout", data);
-        });
-        socket.on('reconnect', (data) => {
-            console.log("reconnect", data);
-        });
-        socket.on('reconnect_attempt', (data) => {
-            console.log("reconnect_attempt", data);
-        });
-        socket.on('signal', (data) =>{
-            console.log("signal", data);
-        });
-        socket.on('connecting', () =>{
-            console.log("connecting");
-        });
         socket.on('connect', () =>{
-            console.log("connected");
             if(escalationContext.stopHandle){ 
                 escalationContext.stopHandle();
                 escalationContext.stopHandle = null;
             }
             lo.forOwn(module.on, (val, evt) => {
                 socket.on(evt, (data) => {
-                    if(!assertEquals(data, val.expected)){
+                    if(!assertEquals(val.expected, data)){
                         handleError({
                             on: evt,
                             data: data
@@ -78,6 +61,7 @@ var Service = (listener) => function(module){
                     else{
                         listener.success(
                             {
+                                time: new Date(),
                                 on: evt,
                                 data: data
                             }
@@ -105,6 +89,7 @@ var Service = (listener) => function(module){
                             retry = 0;
                             listener.success(
                                 {
+                                    time: new Date(),
                                     on: evt,
                                     data: data
                                 }
@@ -118,7 +103,6 @@ var Service = (listener) => function(module){
             });
         });
         socket.on('disconnect', () => {
-            console.log("disconnected");
             handleError({}, "disconnect");
             escalation.execRetry((done, stop) => {
                 connect();
