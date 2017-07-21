@@ -30,20 +30,6 @@ module.exports = {
             }
         }
     },
-    "sender": {
-        "default": {
-            "transporter": {
-                "host": 'smtp.example.com',
-                "port": 465,
-                "secure": true, // secure:true for port 465, secure:false for port 587
-                "auth": {
-                    "user": 'username@example.com',
-                    "pass": 'userpass'
-                }
-            },
-            "from": "username@example.com"
-        }
-    },
     "mail": {
         "escalation": {
             "1": 10,
@@ -52,6 +38,20 @@ module.exports = {
             "4": 600, // 10 minutes
             "5": 3600, // 1 hour
             "after": 14400 // 4 hour
+        },
+        "sender": {
+            "default": {
+                "transporter": {
+                    "host": 'smtp.example.com',
+                    "port": 465,
+                    "secure": true, // secure:true for port 465, secure:false for port 587
+                    "auth": {
+                        "user": 'username@example.com',
+                        "pass": 'userpass'
+                    }
+                },
+                "from": "username@example.com"
+            }
         },
         "http": {
             "error": {

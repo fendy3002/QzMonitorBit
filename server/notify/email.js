@@ -37,7 +37,7 @@ var getText = function(module, actual, message){
 var Service = function(module, moduleMail, callback){
     var appConfig = context.appConfig;
     var mailConfig = {
-        "sender": appConfig.sender[moduleMail.use],
+        "sender": appConfig.mail.sender[moduleMail.use],
         "mail": appConfig.mail[module.type],
         "to": moduleMail.to
     };

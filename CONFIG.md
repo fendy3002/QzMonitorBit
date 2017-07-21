@@ -8,7 +8,6 @@
 | cpuInterval | In seconds. Specify interval the app will capture system performance periodically. Default 5 seconds. |
 | monitorbit | Boolean. If false then the app won't capture system performance periodically. Default true. |
 | listener | See [listener](#app_listener). |
-| sender | nodemailer transporter mail configuration. For more info, see [nodemailer](https://nodemailer.com) |
 | mail | Mail subject and body template for notification. See [mail](#app_mail). |
 
 <a name="app_listener"></a>
@@ -35,6 +34,7 @@ Specify configurations for mail-related notification.
 | http.recover | Specify mail template for when http request recovered. |
 | websocket.error | Specify mail template for websocket error. |
 | websocket.recover Specify mail template for when websocket server recovered. |
+| sender | nodemailer transporter mail configuration. For more info, see [nodemailer](https://nodemailer.com) |
 
 <a name="escalation"></a>
 ## Escalation
