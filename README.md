@@ -6,6 +6,7 @@ Multi-purpose tools for monitoring. Monitor http request, websocket and system p
 2. [Installation](#installation)
 3. [Configuration](#configuration)
 4. [Log file](#log_file)
+5. [Contributing](#contributing)
 
 <a name="description"></a>
 ## What this app is capable of
@@ -78,3 +79,7 @@ The app will keep the monitoring log in some log files. The log files will be di
 <p align="center">
 	<em>QzMonitorBit log file. It shows CPU log (left), memory log (middle), and http listener log (right)<em>
 </p>
+
+<a name="contributing"></a>
+## Contributing
+Please read the [contributing guidelines](./CONTRIBUTING.md). 
