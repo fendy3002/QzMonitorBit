@@ -8,7 +8,6 @@
 | cpuInterval | In seconds. Specify interval the app will capture system performance periodically. Default 5 seconds. |
 | monitorbit | Boolean. If false then the app won't capture system performance periodically. Default true. |
 | listener | See [listener](#app_listener). |
-| escalation | See [escalation](#app_escalation). |
 | sender | nodemailer transporter mail configuration. For more info, see [nodemailer](https://nodemailer.com) |
 | mail | Mail subject and body template for notification. See [mail](#app_mail). |
 
@@ -21,14 +20,26 @@ Global configuration for listener-specific.
 | ----- | ----- |
 | http.timeout | Specify timeout for http request in listener. Default 5 seconds. |
 | http.error | Specify error message for different error type for http listener. |
-| websocket.connectEscalation | Specify error message for different error type for http listener. |
+| websocket.connectEscalation | Specify [escalation](#escalation) for websocket connection. It decides when the next reconnection attempt will be attempted, after 5 retries. Reset when making successful connection to server |
 | websocket.error | Specify error message for different error type for websocket listener. |
 
+<a name="app_mail"></a>
+### app.js mail
 
-<a name="app_escalation"></a>
-### app.js escalation
+Specify configurations for mail-related notification.
 
-Escalation is a set of configuration that decide when the next e-mail notification will be sent. It's purpose is to avoid spam the recipient's e-mail if a server is down for some times or the recipient cannot respond in time. It keeps the value in second. Example of escalation:
+|Field | Description |
+| ----- | ----- |
+| escalation | Specify [escalation](#escalation) for sending email, to prevent spam. It decides when the next mail will be sent. Reset when server is recovered. |
+| http.error | Specify mail template for http error. |
+| http.recover | Specify mail template for when http request recovered. |
+| websocket.error | Specify mail template for websocket error. |
+| websocket.recover Specify mail template for when websocket server recovered. |
+
+<a name="escalation"></a>
+## Escalation
+
+Escalation is a set of configuration that decide when the next action will be performed. It's purpose is to avoid spam the recipient's e-mail if a server is down for some times or the recipient cannot respond in time. It keeps the value in second. Example of escalation:
 
 ```
 {
@@ -41,10 +52,4 @@ Escalation is a set of configuration that decide when the next e-mail notificati
 }
 ```
 
-It means that after first notification, it will send next error notification only after 10 second, then 1 minute, 5 minutes and so on, until it's stuck at 4 hour. Escalation reset when server recovered.
-
-<a name="app_mail"></a>
-### app.js mail
-
-<a name="escalation"></a>
-## Escalation
+It means that after execution, it will perform next execution only after 10 second, then 1 minute, 5 minutes and so on, until it's stuck at every 4 hour. Escalation can be reset.

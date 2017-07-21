@@ -41,7 +41,7 @@ var Service = function(module, moduleMail, callback){
         "mail": appConfig.mail[module.type],
         "to": moduleMail.to
     };
-    var escalation = escalationRaw(appConfig.escalation);
+    var escalation = escalationRaw(appConfig.mail.escalation);
 
     var error = function(actual){
         escalation.exec((done) => {

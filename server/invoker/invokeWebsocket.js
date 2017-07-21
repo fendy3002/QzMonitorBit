@@ -35,7 +35,8 @@ var Service = (listener) => function(module){
         autoConnect: false,
         rejectUnauthorized: false,
         transports: [ 'websocket' ],
-	    upgrade: false
+	    upgrade: false,
+        reconnectionAttempts: 5
     };
     var socket = io(module.url, socketOption);
 
