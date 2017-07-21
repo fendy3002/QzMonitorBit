@@ -77,7 +77,7 @@ The app will keep the monitoring log in some log files. The log files will be di
 	style="width: 70%;"/>
 </p>
 <p align="center">
-	<em>QzMonitorBit log file. It shows CPU log (left), memory log (middle), and http listener log (right)<em>
+	<em>QzMonitorBit log file. It shows CPU log (left), memory log (middle), and http listener log (right)</em>
 </p>
 
 <a name="contributing"></a>
