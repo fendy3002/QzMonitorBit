@@ -31,10 +31,34 @@ This app is planned to make TCP request to specific address and port. The respon
 
 ### Notify via email
 
-Any monitoring error can be configured to be sent by email. 
+Any monitoring error, and server recovery can be configured to be sent by email. 
 
 ### Notify via websocket
 
-Any monitoring error can be configured to be sent by email. 
+Any monitoring error and info can be configured to be sent by websocket.
 
 ### Notify via api (planned)
+
+Any monitoring error and info is planned to be sent by http request.
+
+<a name="installation"></a>
+## Installation
+
+You will need to have [node js](https://nodejs.org/) installed.
+
+Execute the following script:
+
+```
+git clone https://github.com/fendy3002/QzMonitorBit.git QzMonitorBit;
+
+cd QzMonitorBit;
+
+npm install;
+
+npm start;
+```
+
+<a name="configuration"></a>
+## Configuration
+
+See [configuration](/CONFIG.md).
