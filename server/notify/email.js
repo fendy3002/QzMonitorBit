@@ -5,12 +5,19 @@ import context from "../context.js";
 
 var getAccess = (module) => {
     if(module.type = "http"){ return module.url + ":" + module.method }
+    else if(module.type = "websocket"){ return module.url }
     return "";
 }
+var getTime = (module, actual) => {
+    if(module.type = "http"){ return actual.time.end; }
+    else if(module.type = "websocket"){ return actual.time; }
+    return null;
+};
+
 var getText = function(module, actual, message){
     var toParse = {
         "%NAME%" : module.name,
-        "%NOW%" : dateformat(actual.time.end, "yyyymmmdd hh:MM:dd"),
+        "%NOW%" : dateformat(getTime(module, actual), "yyyymmmdd hh:MM:dd"),
         "%ACCESS%" : getAccess(module),
         "%ACTUAL%" : JSON.stringify(actual, null, 2)
     };

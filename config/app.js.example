@@ -17,7 +17,8 @@ module.exports = {
         "websocket":{
             "error": {
                 "different": "Response is different from expected",
-                "disconnect": "Socket has been disconnected"
+                "disconnect": "Socket has been disconnected",
+                "connect_error": "Cannot make websocket connection"
             },
             "connectEscalation": {
                 "1": 10,
