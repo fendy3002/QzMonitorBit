@@ -9,7 +9,7 @@ import bufferBase from './bufferBase.js';
 
 var onNewGroup = function(currentBuffer){
     var success = currentBuffer.success ? true : false;
-    var time = getTime(currentBuffer);
+    var time = (currentBuffer.success || currentBuffer.error).time;
     return {
         success: success ? 1 : 0,
         error: success ? 0 : 1,
@@ -19,7 +19,7 @@ var onNewGroup = function(currentBuffer){
 
 var onExistingGroup = function(old, currentBuffer){
     var success = currentBuffer.success ? true : false;
-    var time = getTime(currentBuffer);
+    var time = (currentBuffer.success || currentBuffer.error).time;
     return {
         success: old.success += success ? 1 : 0,
         error: old.error += success ? 0 : 1,
