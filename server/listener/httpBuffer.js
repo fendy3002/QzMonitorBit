@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import lo from 'lodash';
 import JSON5 from 'json5';
+import writeFileAtomic from 'write-file-atomic';
 import notify from '../notify';
 import context from "../context.js";
 import bufferBase from './bufferBase.js';
@@ -64,9 +65,9 @@ var Service = (module) => {
                         existing[currentKey] = groupBuffer[currentKey];
                     }
                 }
-                fs.writeFile(fullPath, 
+                writeFileAtomic(fullPath, 
                     JSON.stringify(existing, null, 2), 
-                    'utf8', callback);
+                    { encoding: 'utf8' }, callback);
             });
         });
     };
@@ -94,14 +95,21 @@ var Service = (module) => {
         }
     };
 
-    var flush = () => {
+    var flush = (done) => {
+        done = done || (() => {});
+        if(!buffer || buffer.length == 0){ 
+            done();
+            return;
+        }
+
         // if monday morning
         if(new Date().getDay() == 1 && new Date().getHours() == 0){
-            var minDate = lo.minBy(buffer.time.start);
+            var minDate = lo.minBy(buffer, k=> k.time.start);
             // if buffer still has sunday data
             if(minDate.getDay() == 0){
                 writeBuffer(lo.filter(buffer, k=> k.getDay() == 0), ()=>{
                     writeBuffer(lo.filter(buffer, k=> k.getDay() == 1), ()=>{
+                        done();
                         buffer = [];
                         lastFlush = new Date();
                     });
@@ -109,6 +117,7 @@ var Service = (module) => {
             }
             else{
                 writeBuffer(buffer, (err)=>{
+                    done();
                     buffer = [];
                     lastFlush = new Date();
                 });
@@ -116,11 +125,16 @@ var Service = (module) => {
         }
         else{
             writeBuffer(buffer, (err)=>{
+                done();
                 buffer = [];
                 lastFlush = new Date();
             });
         }
     };
+
+    context.dyingWish.subscribe((done) => {
+        flush(done);
+    });
 
     return {
         success,

@@ -54,6 +54,7 @@
     "laravel-elixir": "^4.0.0",
     "lodash": "^4.16.4",
     "moment": "^2.18.1",
+    "node-cleanup": "^2.1.2",
     "nodemailer": "^4.0.1",
     "normalizr": "^2.2.1",
     "promise": "^8.0.0",
@@ -87,6 +88,7 @@
     "sqlite3": "^3.1.8",
     "superagent": "^2.3.0",
     "uuid": "^3.1.0",
-    "webpack": "^1.13.2"
+    "webpack": "^1.13.2",
+    "write-file-atomic": "^2.1.0"
   }
 }
