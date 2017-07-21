@@ -15,6 +15,7 @@
             "use": "default",
             "to": "first.person@mail.com, second.person@mail.com"
         }],
+        "websocket": true,
         "api": [{"https": ""}]
     }
 }

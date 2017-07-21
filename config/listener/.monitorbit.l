@@ -23,6 +23,7 @@
             "use": "default",
             "to": "fendy.heryanto@coderscolony.com"
         }],
+        "websocket": true,
         "api": [{"https": ""}]
     }
 }

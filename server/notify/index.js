@@ -11,9 +11,10 @@ var Service = function(module, callback){
                     return email(module, k, callback);
                 }));
         }
+        if(module.notify.websocket){
+            notifiers.push(socket(module));
+        }
     }
-
-    notifiers.push(socket(module));
 
     var error = function(actual){
         lo.forEach(notifiers, n=> {
