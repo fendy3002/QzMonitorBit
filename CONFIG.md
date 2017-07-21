@@ -33,7 +33,7 @@ Specify configurations for mail-related notification.
 | http.error | Specify mail template for http error. |
 | http.recover | Specify mail template for when http request recovered. |
 | websocket.error | Specify mail template for websocket error. |
-| websocket.recover Specify mail template for when websocket server recovered. |
+| websocket.recover | Specify mail template for when websocket server recovered. |
 | sender | nodemailer transporter mail configuration. For more info, see [nodemailer](https://nodemailer.com) |
 
 <a name="escalation"></a>
