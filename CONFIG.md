@@ -33,7 +33,7 @@ Specify configurations for mail-related notification.
 | http.error | Specify mail template for http error. |
 | http.recover | Specify mail template for when http request recovered. |
 | websocket.error | Specify mail template for websocket error. |
-| websocket.recover Specify mail template for when websocket server recovered. |
+| websocket.recover | Specify mail template for when websocket server recovered. |
 | sender | nodemailer transporter mail configuration. For more info, see [nodemailer](https://nodemailer.com) |
 
 <a name="escalation"></a>
@@ -53,3 +53,7 @@ Escalation is a set of configuration that decide when the next action will be pe
 ```
 
 It means that after execution, it will perform next execution only after 10 second, then 1 minute, 5 minutes and so on, until it's stuck at every 4 hour. Escalation can be reset.
+
+## Listener
+
+All listener configuration are stored in `config/listener` folder. All file with prefix dot `.` will be ignored, such as the example `.httpbin.l` and `monitorbit.l`. File extension `.l` is optional but recommended, as the further development will consider the `.l` file extension.

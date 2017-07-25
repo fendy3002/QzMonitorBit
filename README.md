@@ -9,6 +9,8 @@ Multi-purpose tools for monitoring. Monitor http request, websocket and system p
 1. [What this app is capable of](#description)
 2. [Installation](#installation)
 3. [Configuration](#configuration)
+4. [Log file](#log_file)
+5. [Contributing](#contributing)
 
 <a name="description"></a>
 ## What this app is capable of
@@ -67,6 +69,24 @@ npm start;
 
 See [configuration](/CONFIG.md).
 
+<a name="log_file"></a>
+## Log file
+
+The app will keep the monitoring log in some log files. The log files will be divided to every 7 days, starting from Monday. Each file, the data will be separated in group of 10 minutes to keep the log file small.
+
+<p align="center">
+<img src="https://user-images.githubusercontent.com/5449185/28472406-a620d6d2-6e6a-11e7-8152-87d956c3b85b.JPG" 
+	alt="QzMonitorBit log file. It shows CPU log (left), memory log (middle), and http listener log (right)"
+	title="QzMonitorBit log file. It shows CPU log (left), memory log (middle), and http listener log (right)"
+	style="width: 70%;"/>
+</p>
+<p align="center">
+	<em>QzMonitorBit log file. It shows CPU log (left), memory log (middle), and http listener log (right)</em>
+</p>
+
+<a name="contributing"></a>
+## Contributing
+Please read the [contributing guidelines](./CONTRIBUTING.md). 
 
 
 
