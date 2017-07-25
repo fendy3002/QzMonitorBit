@@ -1,4 +1,8 @@
 # QzMonitorBit
+
+[![MIT license][license-img]][license-url]
+[![Git Issues][issues-img]][issues-url]
+
 Multi-purpose tools for monitoring. Monitor http request, websocket and system performance, then listen it live via websocket or read the saved log.
 
 # Contents
@@ -62,3 +66,12 @@ npm start;
 ## Configuration
 
 See [configuration](/CONFIG.md).
+
+
+
+
+[license-url]: https://github.com/fendy3002/QzMonitorBit/blob/master/LICENSE
+[license-img]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
+
+[issues-img]: https://img.shields.io/github/issues/fendy3002/QzMonitorBit.svg?style=flat-square
+[issues-url]: https://github.com/fendy3002/QzMonitorBit/issues

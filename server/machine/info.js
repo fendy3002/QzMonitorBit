@@ -1,4 +1,5 @@
 var os = require('os');
+var spawn = require("child_process").spawn;
 import lo from 'lodash';
 import dateFormat from 'dateformat';
 import context from '../context.js';
@@ -81,13 +82,18 @@ var calculateCpu = function(lastCpuSnap, onGetAvg){
 };
 
 var calculateMem = function(onGetAvg){
-    var newFreeMem = os.freemem();
     var avgMem = {
         time: new Date(),
         free: os.freemem(),
+        available: os.freemem(),
         use: os.totalmem() - os.freemem(),
         percent: (100 - (os.freemem() / os.totalmem() * 100)).toFixed(2)
     };
+    if(process.platform === "linux"){
+        var prc = spawn("free", []);
+        prc.stdout.setEncoding("utf8");
+        
+    }
     onGetAvg(avgMem);
 
     setTimeout(() => {
