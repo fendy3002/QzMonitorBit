@@ -104,7 +104,7 @@ var Service = (module) => {
 
         // if monday morning
         if(new Date().getDay() == 1 && new Date().getHours() == 0){
-            var minDate = lo.minBy(buffer, k=> k.time.start);
+            var minDate = lo.minBy(buffer, k=> (k.success || k.error).time.start);
             // if buffer still has sunday data
             if(minDate.getDay() == 0){
                 writeBuffer(lo.filter(buffer, k=> k.getDay() == 0), ()=>{
